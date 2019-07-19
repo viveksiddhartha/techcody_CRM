@@ -1,6 +1,7 @@
 package main
 
 import (
+	"SV_CRM/common"
 	"SV_CRM/common/datastore"
 	"SV_CRM/handlers"
 	"fmt"
@@ -23,7 +24,7 @@ func main() {
 	fmt.Println("Connected successfully")
 
 	//defer db.Close()
-
+	env := common.Env{}
 	//New router created for handler function
 	router := mux.NewRouter()
 
@@ -31,7 +32,7 @@ func main() {
 	http.Handle("/", router)
 	//Home handler will provide the welcome message on index page
 	router.HandleFunc("/", handlers.HomeHandler).Methods("GET")
-	router.HandleFunc("/signup", handlers.SignUpHandler)
+	router.Handle("/signup", handlers.SignUpHandler(&env))
 
 	//Lister defined for end point
 	/*

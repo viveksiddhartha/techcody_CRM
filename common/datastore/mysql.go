@@ -2,6 +2,7 @@ package datastore
 
 import (
 	"SV_CRM/models"
+	"fmt"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -9,6 +10,7 @@ import (
 
 func CreateUser(user *models.User) error {
 
+	fmt.Print("%v", user)
 	m := DBConn()
 	tx, err := m.Begin()
 	if err != nil {
