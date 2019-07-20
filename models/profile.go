@@ -6,26 +6,28 @@ import (
 	"time"
 )
 
-type User struct {
+type Profile struct {
 	UUID              string `json:"uuid" bson:"uuid"`
-	Username          string `json:"username" bson:"username"`
+	CoEntity          string `json:"CoEntity" bson:"CoEntity"`
+	Profilename       string `json:"Profilename" bson:"Profilename"`
 	FirstName         string `json:"firstName" bson:"firstName"`
 	LastName          string `json:"lastName" bson:"lastName"`
 	Email             string `json:"email" bson:"email"`
+	ContactNo         string `json:"ContactNo" bson:"ContactNo"`
 	PasswordHash      string `json:"passwordHash" bson:"passwordHash"`
 	TimestampCreated  int64  `json:"timestampCreated" bson:"timestampCreated"`
 	TimestampModified int64  `json:"timestampModißfied" bson:"timestampModified"`
 }
 
-func NewUser(password string) *User {
+func NewProfile(password string) *Profile {
 
-	//func NewUser(w http.ResponseWriter, r *http.Request) *User {
-	u := User{}
-	//fmt.Printf("This is NewUser arg parameter print %v %v %v %v", username, firstName, lastName, email, password)
+	//func NewProfile(w http.ResponseWriter, r *http.Request) *Profile {
+	u := Profile{}
+	//fmt.Printf("This is NewProfile arg parameter print %v %v %v %v", Profilename, firstName, lastName, email, password)
 	passwordHash := utility.SHA256OfString(u.PasswordHash)
 	now := time.Now()
 	unixTimestamp := now.Unix()
-	b := User{Username: u.Username, FirstName: u.FirstName, LastName: u.LastName, Email: u.Email, PasswordHash: passwordHash, TimestampCreated: unixTimestamp}
+	b := Profile{CoEntity: u.CoEntity, Profilename: u.Profilename, FirstName: u.FirstName, LastName: u.LastName, Email: u.Email, ContactNo: u.ContactNo, PasswordHash: passwordHash, TimestampCreated: unixTimestamp}
 	fmt.Printf("this is u %v", b)
 	return &b
 }
