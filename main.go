@@ -23,8 +23,10 @@ func main() {
 
 	fmt.Println("Connected successfully")
 
-	//defer db.Close()
 	env := common.Env{}
+
+	db := datastore.DBConn()
+	defer db.Close()
 	//New router created for handler function
 	router := mux.NewRouter()
 
