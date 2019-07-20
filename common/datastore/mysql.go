@@ -23,6 +23,7 @@ func CreateUser(user *models.User) error {
 	if err != nil {
 		return err
 	}
+	fmt.Print("stmt details%v", stmt)
 
 	defer stmt.Close()
 
