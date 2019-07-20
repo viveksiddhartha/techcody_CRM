@@ -17,13 +17,15 @@ type User struct {
 	TimestampModified int64  `json:"timestampModißfied" bson:"timestampModified"`
 }
 
-func NewUser(username string, firstName string, lastName string, email string, password string) *User {
+func NewUser(password string) *User {
 
-	fmt.Printf("This is NewUser arg parameter print %v %v %v %v", username, firstName, lastName, email, password)
-	passwordHash := utility.SHA256OfString(password)
+	//func NewUser(w http.ResponseWriter, r *http.Request) *User {
+	u := User{}
+	//fmt.Printf("This is NewUser arg parameter print %v %v %v %v", username, firstName, lastName, email, password)
+	passwordHash := utility.SHA256OfString(u.PasswordHash)
 	now := time.Now()
 	unixTimestamp := now.Unix()
-	u := User{UUID: utility.GenerateUUID(), Username: username, FirstName: firstName, LastName: lastName, Email: email, PasswordHash: passwordHash, TimestampCreated: unixTimestamp}
-	fmt.Printf("this is u %v", u)
-	return &u
+	b := User{Username: u.Username, FirstName: u.FirstName, LastName: u.LastName, Email: u.Email, PasswordHash: passwordHash, TimestampCreated: unixTimestamp}
+	fmt.Printf("this is u %v", b)
+	return &b
 }

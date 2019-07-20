@@ -11,7 +11,9 @@ import (
 	"net/http"
 )
 
-//SignUpForm for page struct
+type Users struct {
+	models.User
+}
 
 //SignUpHandler for sinup hanlder
 func SignUpHandler(e *common.Env) http.Handler {
@@ -23,14 +25,15 @@ func SignUpHandler(e *common.Env) http.Handler {
 		}
 		fmt.Println("This is the reqBody %v", reqBody)
 
-		var u models.User
+		u := models.User{}
 		json.Unmarshal(reqBody, &u)
-		fmt.Println("this is var u models.user %v", u)
+		fmt.Println("this is var u models.user %v", u.Email)
 
-		UserDetails := models.NewUser(r.FormValue("username"), r.FormValue("firstName"), r.FormValue("lastName"), r.FormValue("email"), r.FormValue("password"))
+		//UserDetails := models.NewUser(r.FormValue(u.Username), r.FormValue(u.FirstName), r.FormValue(u.LastName), r.FormValue(u.Email), r.FormValue(u.PasswordHash))
 
-		fmt.Println("this is userdetails %v", u)
-		err = datastore.CreateUser(UserDetails)
+		//Optional statement to experiment the new way
+
+		err = datastore.CreateUser(&u)
 
 		if err != nil {
 			log.Print(err)

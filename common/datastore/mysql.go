@@ -6,11 +6,15 @@ import (
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
+
+	"SV_CRM/common/utility"
 )
 
 func CreateUser(user *models.User) error {
 
-	fmt.Print("%v", user)
+	PasswordH := utility.SHA256OfString(user.PasswordHash)
+	uuid := utility.GenerateUUID()
+
 	m := DBConn()
 	tx, err := m.Begin()
 	if err != nil {
@@ -27,7 +31,7 @@ func CreateUser(user *models.User) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(user.UUID, user.Username, user.FirstName, user.LastName, user.Email, user.PasswordHash)
+	_, err = stmt.Exec(uuid, user.Username, user.FirstName, user.LastName, user.Email, PasswordH)
 	if err != nil {
 		return err
 	}
