@@ -4,6 +4,7 @@ import (
 	"SV_CRM/common"
 	"SV_CRM/common/datastore"
 	"SV_CRM/models"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -13,6 +14,8 @@ import (
 
 type Profiles struct {
 	models.Profile
+	datastore.Datastore
+	Error error
 }
 
 //SignUpHandler for sinup hanlder
@@ -20,24 +23,24 @@ func ProfileCreate(e *common.Env) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		reqBody, err := ioutil.ReadAll(r.Body)
+		u := models.Profile{}
 		if err != nil {
 			log.Print("Encountered error when attempting to read the request body: ", err)
 		}
-		
-		fmt.Println("This is the reqBody %v", reqBody)
 
-		u := models.Profile{}
 		json.Unmarshal(reqBody, &u)
-		fmt.Println("this is var u models.Profile %v", u.Email)
 
-		//ProfileDetails := models.NewProfile(r.FormValue(u.Profilename), r.FormValue(u.FirstName), r.FormValue(u.LastName), r.FormValue(u.Email), r.FormValue(u.PasswordHash))
+		_, error := datastore.GetProfileDetailsByProfilename(u.Profilename, u.CoEntityID)
+		if error == sql.ErrNoRows {
 
-		//Optional statement to experiment the new way
+			err = datastore.CreateProfile(&u)
 
-		err = datastore.CreateProfile(&u)
+			if err != nil {
+				log.Print(err)
+			}
+		} else {
+			fmt.Printf("Profile already exist %v", u.Profilename)
 
-		if err != nil {
-			log.Print(err)
 		}
 
 	})

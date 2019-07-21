@@ -7,8 +7,15 @@ import (
 
 type Datastore interface {
 	CreateProfile(Profile *models.Profile) error
-	EntityCreate(Partner *models.CoEntity)
+	EntityCreate(Entity *models.CoEntity)
 	Close()
+	GetProfileDetailsByProfilename(Profilename string) (*models.Profile, error)
+	GetProfileDetailsByCoEntity(CoEntity string) (*models.Profile, error)
+	GetProfileDetailsByemail(email string) (*models.Profile, error)
+	GetProfileDetailsByContactNo(ContactNo string) (*models.Profile, error)
+	GetEntityDetailsByCoEntityId(CoEntityId string) (*models.CoEntity, error)
+	GetEntityDetailsByCompanyNm(CompanyNm string) (*models.CoEntity, error)
+	GetEntityDetailsByEmail(Email string) (*models.CoEntity, error)
 }
 
 func DBConn() (db *sql.DB) {
