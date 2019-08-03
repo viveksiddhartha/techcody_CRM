@@ -20,7 +20,7 @@ type Datastore interface {
 
 func DBConn() (db *sql.DB) {
 	dbDriver := "mysql"
-	db, err := sql.Open(dbDriver, "sv_crm:sv_crm@tcp(127.0.0.1:3306)/gopherfacedb")
+	db, err := sql.Open(dbDriver, "sv_crm:sv_crm@tcp(127.0.0.1:3306)/SV_CRM")
 	if err != nil {
 		panic(err.Error())
 	}

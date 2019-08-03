@@ -29,7 +29,7 @@ func EntityCreate(e *common.Env) http.Handler {
 		json.Unmarshal(reqBody, &u)
 
 		//db.QueryRow("select * FROM coentity WHERE Status in ('0','1') and CoEntityID = $1", u.CoEntityId)
-		
+
 		_, error := datastore.GetEntityDetailsByCoEntityId(u.CoEntityId)
 		if error == sql.ErrNoRows {
 
@@ -41,9 +41,12 @@ func EntityCreate(e *common.Env) http.Handler {
 			if err != nil {
 				log.Print(err)
 			}
+			w.Write([]byte("200 - Profile has been Created successfully!"))
 
 		} else {
-			fmt.Printf("User already exist %v", u.CoEntityId)
+			fmt.Printf("User already exist %v \n", u.CoEntityId)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("500 - User already exist!"))
 
 		}
 

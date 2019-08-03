@@ -39,8 +39,10 @@ func ProfileCreate(e *common.Env) http.Handler {
 				log.Print(err)
 			}
 		} else {
-			fmt.Printf("Profile already exist %v", u.Profilename)
+			fmt.Printf("Profile already exist %v \n", u.Profilename)
 
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("500 - User already exist!"))
 		}
 
 	})
