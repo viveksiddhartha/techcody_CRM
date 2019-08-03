@@ -52,3 +52,35 @@ func EntityCreate(e *common.Env) http.Handler {
 
 	})
 }
+
+/*
+func EntityUpdate(e *common.Env) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		reqBody, err := ioutil.ReadAll(r.Body)
+		u := models.Profile{}
+		if err != nil {
+			log.Print("Encountered error when attempting to read the request body: ", err)
+		}
+
+		json.Unmarshal(reqBody, &u)
+
+		//db.QueryRow("select * FROM coentity WHERE Status in ('0','1') and CoEntityID = $1", u.CoEntityId)
+
+		_, error := datastore.GetProfileDetailsByProfilename(u.Profilename)
+		if error == sql.ErrNoRows {
+
+			fmt.Printf("No User exist %v \n", u.Profilename)
+			w.Write([]byte("200 - No record exist!"))
+
+		} else {
+			err = datastore.EntityCreate(&u)
+			if err != nil {
+				log.Print(err)
+			}
+			w.Write([]byte("200 - Profile has been Created successfully!"))
+
+		}
+
+	})
+}
+*/

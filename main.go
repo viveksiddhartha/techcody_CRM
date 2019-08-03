@@ -36,6 +36,7 @@ func main() {
 	router.HandleFunc("/", handlers.HomeHandler).Methods("GET")
 	router.Handle("/entity", handlers.EntityCreate(&env))
 	router.Handle("/profile", handlers.ProfileCreate(&env))
+	router.Handle("/searchprofile", handlers.UpdateProfile(&env))
 
 	//Lister defined for end point
 	/*

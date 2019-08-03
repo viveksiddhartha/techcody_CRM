@@ -16,6 +16,8 @@ type Datastore interface {
 	GetEntityDetailsByCoEntityId(CoEntityId string) (*models.CoEntity, error)
 	GetEntityDetailsByCompanyNm(CompanyNm string) (*models.CoEntity, error)
 	GetEntityDetailsByEmail(Email string) (*models.CoEntity, error)
+	UpdateProfileByProfileID(Profile *models.Profile) error
+	GetProfileDetailsByProfilCoEntity(Profilename string, CoEntityID string) (*models.Profile, error)
 }
 
 func DBConn() (db *sql.DB) {

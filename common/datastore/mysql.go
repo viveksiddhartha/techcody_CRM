@@ -80,10 +80,28 @@ func EntityCreate(Entity *models.CoEntity) error {
 	return nil
 }
 
-func GetProfileDetailsByProfilename(Profilename string, CoEntityID string) (*models.Profile, error) {
+func GetProfileDetailsByProfilename(Profilename string) (*models.Profile, error) {
 
 	m := DBConn()
-	stmt, err := m.Prepare("SELECT uuid, CoEntityID, profilename, first_name, last_name, email,EmailVerified, password_hash,ContactNo,PhoneVerified,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM Profile WHERE Status in ('0','1') and Profilename = ? and CoEntityID=?")
+	stmt, err := m.Prepare("SELECT uuid, CoEntityID, profilename, first_name, last_name, email,EmailVerified, password_hash,ContactNo,PhoneVerified,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM Profile WHERE Status in ('0','1') and Profilename = ?")
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	row := stmt.QueryRow(Profilename)
+	u := models.Profile{}
+	err = row.Scan(&u.UUID, &u.CoEntityID, &u.Profilename, &u.FirstName, &u.LastName, &u.Email, &u.EmailVerified, &u.PasswordHash, &u.ContactNo, &u.PhoneVerified, &u.Status, &u.TimestampCreated, &u.TimestampModified)
+	return &u, err
+
+}
+
+func GetProfileDetailsByProfilCoEntity(Profilename string, CoEntityID string) (*models.Profile, error) {
+
+	m := DBConn()
+	stmt, err := m.Prepare("SELECT uuid, CoEntityID, profilename, first_name, last_name, email,EmailVerified, password_hash,ContactNo,PhoneVerified,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM Profile WHERE Status in ('0','1') and Profilename = ? and CoEntityID =?")
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -97,6 +115,7 @@ func GetProfileDetailsByProfilename(Profilename string, CoEntityID string) (*mod
 	return &u, err
 
 }
+
 func GetProfileDetailsByCoEntity(CoEntityId string) (*models.Profile, error) {
 
 	m := DBConn()
@@ -210,3 +229,36 @@ func GetEntityDetailsByGenericParam(u *models.CoEntity) {
 
 }
 */
+//===Update queries=======================================================
+
+func UpdateProfileByProfileID(Profile *models.Profile) error {
+
+	m := DBConn()
+	tx, err := m.Begin()
+	if err != nil {
+		log.Print(err)
+	}
+
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare("UPDATE Profile set first_name =?, last_name =?, email =?,ContactNo =? where Profilename = ?")
+	//stmt, err := tx.Prepare("INSERT INTO Profile(Profilename, first_name, last_name, email,ContactNo) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE first_name=?, last_name=?,email=?,ContactNo=?")
+	if err != nil {
+		return err
+	}
+	fmt.Print("stmt details%v", stmt)
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(Profile.FirstName, Profile.LastName, Profile.Email, Profile.ContactNo, Profile.Profilename)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
