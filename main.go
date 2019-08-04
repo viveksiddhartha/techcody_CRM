@@ -23,8 +23,10 @@ func main() {
 
 	fmt.Println("Connected successfully")
 
-	//defer db.Close()
 	env := common.Env{}
+
+	db := datastore.DBConn()
+	defer db.Close()
 	//New router created for handler function
 	router := mux.NewRouter()
 
@@ -32,7 +34,9 @@ func main() {
 	http.Handle("/", router)
 	//Home handler will provide the welcome message on index page
 	router.HandleFunc("/", handlers.HomeHandler).Methods("GET")
-	router.Handle("/signup", handlers.SignUpHandler(&env))
+	router.Handle("/entity", handlers.EntityCreate(&env))
+	router.Handle("/profile", handlers.ProfileCreate(&env))
+	router.Handle("/searchprofile", handlers.UpdateProfile(&env))
 
 	//Lister defined for end point
 	/*
