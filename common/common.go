@@ -1,7 +1,14 @@
 package common
 
-import "SV_CRM/common/datastore"
+import (
+	"honnef.co/go/js/dom"
+
+	"SV_CRM/common/datastore"
+)
 
 type Env struct {
-	DB datastore.Datastore
+	DB             datastore.Datastore
+	Window         dom.Window
+	Document       dom.Document
+	PrimaryContent dom.Element
 }

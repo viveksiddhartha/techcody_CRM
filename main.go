@@ -34,6 +34,7 @@ func main() {
 	http.Handle("/", router)
 	//Home handler will provide the welcome message on index page
 	router.HandleFunc("/", handlers.HomeHandler).Methods("GET")
+	router.Handle("/login", handlers.LoginEntity(&env))
 	router.Handle("/entity", handlers.EntityCreate(&env))
 	router.Handle("/profile", handlers.ProfileCreate(&env))
 	router.Handle("/updateprofile", handlers.UpdateProfile(&env))
