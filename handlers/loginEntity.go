@@ -15,6 +15,7 @@ import (
 
 type LoginSts struct {
 	models.LoginSt
+	models.SessionSt
 	datastore.Datastore
 	Error error
 }
@@ -68,7 +69,16 @@ func LoginEntity(e *common.Env) http.Handler {
 
 				}
 
+				usession := map[string]string{
+					"Username": ul.Username,
+					"Session":  sessionID,
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusOK)
 				w.Write([]byte("200 - authenticated successfully"))
+				json.NewEncoder(w).Encode(usession)
+
 				return
 
 			} else {
@@ -79,6 +89,5 @@ func LoginEntity(e *common.Env) http.Handler {
 			}
 
 		}
-
 	})
 }

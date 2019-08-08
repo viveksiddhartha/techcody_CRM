@@ -36,8 +36,11 @@ func CreateSecureCookie(ul *models.LoginSt, sessionID string, w http.ResponseWri
 			Secure:   false,
 			HttpOnly: true,
 		}
-		fmt.Println("Check 6 Ready for SetCookie %v %v \n", cookie, w)
+
 		http.SetCookie(w, cookie)
+
+		fmt.Printf("Check 5 Ready for Create Secure Cookie %v %v \n ", sessionID, ul.Username)
+
 	} else {
 		return err
 	}
