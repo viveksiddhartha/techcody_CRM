@@ -2,7 +2,6 @@ package authenticate
 
 import (
 	"SV_CRM/models"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -21,12 +20,10 @@ var blockKey = []byte("SV_CRM_SECRET_BLOCKKEY_S")
 var s = securecookie.New(hashSKey, blockKey)
 
 func CreateSecureCookie(ul *models.LoginSt, sessionID string, w http.ResponseWriter, r *http.Request) error {
-	fmt.Printf("Check 3 Ready for Create Secure Cookie %v %v \n ", sessionID, ul.Username)
 	value := map[string]string{
 		"username": ul.Username,
 		"sid":      sessionID,
 	}
-	fmt.Println("Check 4 Ready for Create Secure Cookie %v \n", value)
 
 	if encoded, err := s.Encode("session", value); err == nil {
 		cookie := &http.Cookie{
@@ -38,8 +35,6 @@ func CreateSecureCookie(ul *models.LoginSt, sessionID string, w http.ResponseWri
 		}
 
 		http.SetCookie(w, cookie)
-
-		fmt.Printf("Check 5 Ready for Create Secure Cookie %v %v \n ", sessionID, ul.Username)
 
 	} else {
 		return err
@@ -75,5 +70,8 @@ func ExpireSecureCookie(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-Accel-Expires", "0")
 
 	http.SetCookie(w, cookie)
-	http.Redirect(w, r, "/login", 301)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("logout successfully"))
+
 }

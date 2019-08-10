@@ -53,12 +53,13 @@ func EntityCreate(e *common.Env) http.Handler {
 			   				log.Print(err)
 			   			}
 			*/
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			//w.Write([]byte("200 - authenticated successfully"))
 			json.NewEncoder(w).Encode(EntityValue)
 
 		} else {
-
+			w.Header().Set("Content-Type", "application/json")
 			fmt.Printf("User already exist %v \n", u.CoEntityId)
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("500 - User already exist!"))

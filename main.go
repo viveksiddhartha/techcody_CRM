@@ -40,7 +40,7 @@ func main() {
 	router.Handle("/entity", handlers.EntityCreate(&env))
 	router.Handle("/profile", handlers.ProfileCreate(&env))
 	router.Handle("/updateprofile", handlers.UpdateProfile(&env))
-	router.HandleFunc("/logout", handlers.LogoutHandler).Methods("GET", "POST")
+	router.HandleFunc("/logout", handlers.LogOutCRM)
 	//router.Handle("/updateprofile", middleware.GatedContentHandler(handlers.UpdateProfile(&env)))
 
 	//Lister defined for end point
