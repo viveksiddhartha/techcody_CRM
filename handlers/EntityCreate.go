@@ -15,6 +15,7 @@ import (
 type CoEntity struct {
 	models.CoEntity
 	datastore.Datastore
+	datastore.RDatastore
 	Error error
 }
 
@@ -28,22 +29,36 @@ func EntityCreate(e *common.Env) http.Handler {
 
 		json.Unmarshal(reqBody, &u)
 
-		//db.QueryRow("select * FROM coentity WHERE Status in ('0','1') and CoEntityID = $1", u.CoEntityId)
-
 		_, error := datastore.GetEntityDetailsByCoEntityId(u.CoEntityId)
+		//To enable the redis database get query
+		//values, error := datastore.GetUserRedis(u.CoEntityId)
+
 		if error == sql.ErrNoRows {
 
 			//ProfileDetails := models.NewProfile(r.FormValue(u.Profilename), r.FormValue(u.FirstName), r.FormValue(u.LastName), r.FormValue(u.Email), r.FormValue(u.PasswordHash))
-
-			//Optional statement to experiment the new way
 
 			err = datastore.EntityCreate(&u)
 			if err != nil {
 				log.Print(err)
 			}
-			w.Write([]byte("200 - Profile has been Created successfully!"))
+			EntityValue := map[string]string{
+				"UserName":    u.CoEntityId,
+				"CompanyName": u.CompanyNm,
+				"Status":      "Draft",
+			}
+
+			//Optional statement to experiment the new way... To enable the entity creation in Redis database
+			/* 			err = datastore.CreateEntityRedis(&u)
+			   			if err != nil {
+			   				log.Print(err)
+			   			}
+			*/
+			w.WriteHeader(http.StatusOK)
+			//w.Write([]byte("200 - authenticated successfully"))
+			json.NewEncoder(w).Encode(EntityValue)
 
 		} else {
+
 			fmt.Printf("User already exist %v \n", u.CoEntityId)
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("500 - User already exist!"))

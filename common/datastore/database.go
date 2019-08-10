@@ -23,6 +23,13 @@ type Datastore interface {
 	UpdateEntityByEntityID(Entity *models.CoEntity) error
 }
 
+type RDatastore interface {
+	CreateEntityRedis(entity *models.CoEntity) error
+	GetUserRedis(username string) (*models.CoEntity, error)
+}
+
+//var db sql.DB
+
 func DBConn() (db *sql.DB) {
 	dbDriver := "mysql"
 	db, err := sql.Open(dbDriver, "sv_crm:sv_crm@tcp(127.0.0.1:3306)/SV_CRM")
@@ -32,3 +39,15 @@ func DBConn() (db *sql.DB) {
 	return db
 
 }
+
+/*
+func RDBConn() (dbs *sql.DB) {
+	dbDriver := "redis"
+	dbs, err := sql.Open(dbDriver, "sv_crm:sv_crm@tcp(127.0.0.1:3306)/SV_CRM")
+	if err != nil {
+		panic(err.Error())
+	}
+	return dbs
+
+}
+*/

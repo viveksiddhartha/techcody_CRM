@@ -20,7 +20,7 @@ type LoginSts struct {
 	Error error
 }
 
-func LoginEntity(e *common.Env) http.Handler {
+func LoginEntity(env *common.Env) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		reqBody, err := ioutil.ReadAll(r.Body)
@@ -42,7 +42,7 @@ func LoginEntity(e *common.Env) http.Handler {
 			w.Write([]byte("500 - User name is missing!"))
 		} else {
 			fmt.Println("Check 1 Ready for Authentication")
-			authResult := authenticate.VerifyCredentials(e, ul.Username, ul.Password)
+			authResult := authenticate.VerifyCredentials(env, ul.Username, ul.Password)
 			fmt.Println("Check 2")
 			fmt.Println("auth result: ", authResult)
 
@@ -76,7 +76,7 @@ func LoginEntity(e *common.Env) http.Handler {
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusOK)
-				w.Write([]byte("200 - authenticated successfully"))
+				//w.Write([]byte("200 - authenticated successfully"))
 				json.NewEncoder(w).Encode(usession)
 
 				return

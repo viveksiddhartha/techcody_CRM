@@ -17,7 +17,7 @@ type LoginSts struct {
 	Error error
 }
 
-var SessionStore = sessions.NewCookieStore([]byte("something-very-secret"))
+var SessionStore = sessions.NewCookieStore([]byte("SV_CRM_SECRET_HASHKEY_S"))
 
 //var SessionStore *sessions.FilesystemStore
 
@@ -70,9 +70,9 @@ func ExpireUserSession(w http.ResponseWriter, r *http.Request) {
 
 /*
 func init() {
-	if _, err := os.Stat("/tmp/sv_crm-sessions"); os.IsNotExist(err) {
-		os.Mkdir("/tmp/sv_crm-sessions", 711)
+	if _, err := os.Stat("/tmp/gopherface-sessions"); os.IsNotExist(err) {
+		os.Mkdir("/tmp/gopherface-sessions", 711)
 	}
-	SessionStore = sessions.NewFilesystemStore("/tmp/sv_crm-sessions", []byte(os.Getenv("SV_CRM_SECRET_HASHKEY_S")))
+	SessionStore = sessions.NewFilesystemStore("/tmp/gopherface-sessions")
 }
 */
