@@ -11,6 +11,7 @@ func PackManager() {
 
 /*
 
+
 type Manager struct {
 	cookieName  string     //private cookiename
 	lock        sync.Mutex // protects session
@@ -139,5 +140,6 @@ func init() {
 	globalSessions = NewManager("memory", "gosessionid", 3600)
 	go globalSessions.GC()
 }
-*/
 
+
+*/

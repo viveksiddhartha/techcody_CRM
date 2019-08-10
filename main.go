@@ -4,6 +4,7 @@ import (
 	"SV_CRM/common"
 	"SV_CRM/common/datastore"
 	"SV_CRM/handlers"
+	"SV_CRM/middleware"
 	"fmt"
 	"net/http"
 
@@ -30,6 +31,7 @@ func main() {
 	db := datastore.DBConn()
 	defer db.Close()
 	//New router created for handler function
+
 	router := mux.NewRouter()
 
 	//New handlers for CRM profile handling
@@ -38,10 +40,17 @@ func main() {
 	router.HandleFunc("/", handlers.HomeHandler).Methods("GET")
 	router.Handle("/login", handlers.LoginEntity(&env))
 	router.Handle("/entity", handlers.EntityCreate(&env))
-	router.Handle("/profile", handlers.ProfileCreate(&env))
-	router.Handle("/updateprofile", handlers.UpdateProfile(&env))
+
+	//========Cookie based Authenticiation
+	router.Handle("/profile", middleware.GatedRestAuthHandler(handlers.ProfileCreate(&env)))
+	router.Handle("/profilelist", middleware.GatedRestAuthHandler(handlers.GetAllProfile(&env)))
+	router.Handle("/updateprofile", middleware.GatedRestAuthHandler(handlers.UpdateProfile(&env)))
+	router.Handle("/updateentity", middleware.GatedRestAuthHandler(handlers.UpdateEntity(&env)))
+	router.Handle("/getprofile", middleware.GatedRestAuthHandler(handlers.GetAllEntity(&env)))
+
 	router.HandleFunc("/logout", handlers.LogOutCRM)
-	//router.Handle("/updateprofile", middleware.GatedContentHandler(handlers.UpdateProfile(&env)))
+
+	//router.Handle("/updateprofile", logger.Logger(handlers.UpdateProfile(&env)))
 
 	//Lister defined for end point
 	/*

@@ -9,18 +9,30 @@ type Datastore interface {
 	CreateProfile(Profile *models.Profile) error
 	EntityCreate(Entity *models.CoEntity)
 	Close()
+
+	//========GET ENTITY Details
+	GetEntityDetailsByCoEntityId(CoEntityId string) (*models.CoEntity, error)
+	GetEntityDetailsByCompanyNm(CompanyNm string) (*models.CoEntity, error)
+	GetEntityDetailsByEmail(Email string) (*models.CoEntity, error)
+
+	//========GET Profile Procedure
+	GetProfileDetailsByCoEntityProfilename(CoEntityID string, Profilename string) (*models.Profile, error)
 	GetProfileDetailsByProfilename(Profilename string) (*models.Profile, error)
 	GetProfileDetailsByCoEntity(CoEntity string) (*models.Profile, error)
 	GetProfileDetailsByemail(email string) (*models.Profile, error)
 	GetProfileDetailsByContactNo(ContactNo string) (*models.Profile, error)
-	GetEntityDetailsByCoEntityId(CoEntityId string) (*models.CoEntity, error)
-	GetEntityDetailsByCompanyNm(CompanyNm string) (*models.CoEntity, error)
-	GetEntityDetailsByEmail(Email string) (*models.CoEntity, error)
-	UpdateProfileByProfileID(Profile *models.Profile) error
-	GetProfileDetailsByProfilCoEntity(Profilename string, CoEntityID string) (*models.Profile, error)
 	GetProfileDetailsWithoutStatusByemail(email string) (*models.Profile, error)
 	GetProfileDetailsWithoutStatusByContactNo(ContactNo string) (*models.Profile, error)
+
+	//======GET ENTITY ===================
+	GetProfileDetailsByProfil(Profilename string) (*models.Profile, error)
+
+	//==========UpdateProfile
+	UpdateProfileByProfileID(Profile *models.Profile) error
 	UpdateEntityByEntityID(Entity *models.CoEntity) error
+
+	//==========GET All
+	GetAllProfileDetailsByCoEntity(CoEntityId string) ([]models.Profile, error)
 }
 
 type RDatastore interface {

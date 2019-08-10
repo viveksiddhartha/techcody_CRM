@@ -20,6 +20,7 @@ var blockKey = []byte("SV_CRM_SECRET_BLOCKKEY_S")
 var s = securecookie.New(hashSKey, blockKey)
 
 func CreateSecureCookie(ul *models.LoginSt, sessionID string, w http.ResponseWriter, r *http.Request) error {
+
 	value := map[string]string{
 		"username": ul.Username,
 		"sid":      sessionID,

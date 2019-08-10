@@ -84,7 +84,25 @@ func EntityCreate(Entity *models.CoEntity) error {
 
 //===Get queries=======================================================
 
-func GetProfileDetailsByProfilename(Profilename string) (*models.Profile, error) {
+func GetProfileDetailsByCoEntityProfilename(CoEntityID string, Profilename string) (*models.Profile, error) {
+
+	m := DBConn()
+	stmt, err := m.Prepare("SELECT uuid, CoEntityID, profilename, first_name, last_name, email,EmailVerified, password_hash,ContactNo,PhoneVerified,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM Profile WHERE Status in ('0','1') and CoEntityId=? and Profilename = ? ")
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	row := stmt.QueryRow(CoEntityID, Profilename)
+	u := models.Profile{}
+	err = row.Scan(&u.UUID, &u.CoEntityID, &u.Profilename, &u.FirstName, &u.LastName, &u.Email, &u.EmailVerified, &u.PasswordHash, &u.ContactNo, &u.PhoneVerified, &u.Status, &u.TimestampCreated, &u.TimestampModified)
+	return &u, err
+
+}
+
+func GetProfileDetailsByProfil(Profilename string) (*models.Profile, error) {
 
 	m := DBConn()
 	stmt, err := m.Prepare("SELECT uuid, CoEntityID, profilename, first_name, last_name, email,EmailVerified, password_hash,ContactNo,PhoneVerified,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM Profile WHERE Status in ('0','1') and Profilename = ?")
@@ -96,24 +114,6 @@ func GetProfileDetailsByProfilename(Profilename string) (*models.Profile, error)
 	defer stmt.Close()
 
 	row := stmt.QueryRow(Profilename)
-	u := models.Profile{}
-	err = row.Scan(&u.UUID, &u.CoEntityID, &u.Profilename, &u.FirstName, &u.LastName, &u.Email, &u.EmailVerified, &u.PasswordHash, &u.ContactNo, &u.PhoneVerified, &u.Status, &u.TimestampCreated, &u.TimestampModified)
-	return &u, err
-
-}
-
-func GetProfileDetailsByProfilCoEntity(Profilename string, CoEntityID string) (*models.Profile, error) {
-
-	m := DBConn()
-	stmt, err := m.Prepare("SELECT uuid, CoEntityID, profilename, first_name, last_name, email,EmailVerified, password_hash,ContactNo,PhoneVerified,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM Profile WHERE Status in ('0','1') and Profilename = ? and CoEntityID =?")
-	if err != nil {
-		log.Print(err)
-		return nil, err
-	}
-
-	defer stmt.Close()
-
-	row := stmt.QueryRow(Profilename, CoEntityID)
 	u := models.Profile{}
 	err = row.Scan(&u.UUID, &u.CoEntityID, &u.Profilename, &u.FirstName, &u.LastName, &u.Email, &u.EmailVerified, &u.PasswordHash, &u.ContactNo, &u.PhoneVerified, &u.Status, &u.TimestampCreated, &u.TimestampModified)
 	return &u, err
@@ -177,7 +177,7 @@ func GetProfileDetailsByContactNo(ContactNo string) (*models.Profile, error) {
 func GetEntityDetailsByCoEntityId(CoEntityId string) (*models.CoEntity, error) {
 	m := DBConn()
 
-	stmt, err := m.Prepare("SELECT uuid, CoEntityID, CompanyNm, AliasNm, State, Country,Email, SecretKey, Password, Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM coentity WHERE Status in ('0','1') and CoEntityID = ?")
+	stmt, err := m.Prepare("SELECT uuid, CoEntityID, CompanyNm, AliasNm, State, Country,Email, Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM coentity WHERE Status in ('0','1') and CoEntityID = ?")
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -187,7 +187,7 @@ func GetEntityDetailsByCoEntityId(CoEntityId string) (*models.CoEntity, error) {
 
 	row := stmt.QueryRow(CoEntityId)
 	u := models.CoEntity{}
-	err = row.Scan(&u.UUID, &u.CoEntityId, &u.CompanyNm, &u.AliasNm, &u.State, &u.Country, &u.Email, &u.SecretKey, &u.Password, &u.SecretKey, &u.TimestampCreated, &u.TimestampModified)
+	err = row.Scan(&u.UUID, &u.CoEntityId, &u.CompanyNm, &u.AliasNm, &u.State, &u.Country, &u.Email, &u.Status, &u.TimestampCreated, &u.TimestampModified)
 	return &u, err
 }
 
@@ -320,4 +320,34 @@ func UpdateEntityByEntityID(Entity *models.CoEntity) error {
 	}
 
 	return nil
+}
+
+//=========== GET multiple record List
+
+func GetAllProfileDetailsByCoEntity(CoEntityId string) ([]models.Profile, error) {
+
+	m := DBConn()
+	Profile := make([]models.Profile, 0)
+	stmt, err := m.Prepare("SELECT uuid, CoEntityID, profilename, first_name, last_name, email,EmailVerified, ContactNo,PhoneVerified,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM Profile WHERE Status in ('0','1') and CoEntityId= ?")
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	rows, err := stmt.Query(CoEntityId)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		u := models.Profile{}
+		err := rows.Scan(&u.UUID, &u.CoEntityID, &u.Profilename, &u.FirstName, &u.LastName, &u.Email, &u.EmailVerified, &u.ContactNo, &u.PhoneVerified, &u.Status, &u.TimestampCreated, &u.TimestampModified)
+		if err != nil {
+			return nil, err
+		}
+		Profile = append(Profile, u)
+	}
+	return Profile, nil
 }
