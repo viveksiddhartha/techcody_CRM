@@ -8,12 +8,15 @@ import (
 type Datastore interface {
 	CreateProfile(Profile *models.Profile) error
 	EntityCreate(Entity *models.CoEntity)
+	CreateContract(con *models.Allocation) (*models.Allocation, error)
+	CreateAllocation(con *models.Allocation) (*models.Allocation, error)
 	Close()
 
 	//========GET ENTITY Details
 	GetEntityDetailsByCoEntityId(CoEntityId string) (*models.CoEntity, error)
 	GetEntityDetailsByCompanyNm(CompanyNm string) (*models.CoEntity, error)
 	GetEntityDetailsByEmail(Email string) (*models.CoEntity, error)
+	GetEntityDetailsByCoEntityIdForPassword(CoEntityId string) (*models.CoEntity, error)
 
 	//========GET Profile Procedure
 	GetProfileDetailsByCoEntityProfilename(CoEntityID string, Profilename string) (*models.Profile, error)
@@ -23,9 +26,10 @@ type Datastore interface {
 	GetProfileDetailsByContactNo(ContactNo string) (*models.Profile, error)
 	GetProfileDetailsWithoutStatusByemail(email string) (*models.Profile, error)
 	GetProfileDetailsWithoutStatusByContactNo(ContactNo string) (*models.Profile, error)
-
-	//======GET ENTITY ===================
 	GetProfileDetailsByProfil(Profilename string) (*models.Profile, error)
+
+	//======GET Contract ===================
+	GetContractDetailsByCoEntityID(CoEntityID string) (*models.Allocation, error)
 
 	//==========UpdateProfile
 	UpdateProfileByProfileID(Profile *models.Profile) error

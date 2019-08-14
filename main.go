@@ -40,6 +40,7 @@ func main() {
 	router.HandleFunc("/", handlers.HomeHandler).Methods("GET")
 	router.Handle("/login", handlers.LoginEntity(&env))
 	router.Handle("/entity", handlers.EntityCreate(&env))
+	router.HandleFunc("/logout", handlers.LogOutCRM)
 
 	//========Cookie based Authenticiation
 	router.Handle("/profile", middleware.GatedRestAuthHandler(handlers.ProfileCreate(&env)))
@@ -47,8 +48,10 @@ func main() {
 	router.Handle("/updateprofile", middleware.GatedRestAuthHandler(handlers.UpdateProfile(&env)))
 	router.Handle("/updateentity", middleware.GatedRestAuthHandler(handlers.UpdateEntity(&env)))
 	router.Handle("/getprofile", middleware.GatedRestAuthHandler(handlers.GetAllEntity(&env)))
+	router.Handle("/contract", middleware.GatedRestAuthHandler(handlers.CreateContract(&env)))
 
-	router.HandleFunc("/logout", handlers.LogOutCRM)
+	//========Cookie based Authenticiation
+	router.HandleFunc("/healthcheck", handlers.HealthCheckHandler)
 
 	//router.Handle("/updateprofile", logger.Logger(handlers.UpdateProfile(&env)))
 

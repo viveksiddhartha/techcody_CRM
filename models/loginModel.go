@@ -1,11 +1,11 @@
 package models
 
 type LoginSt struct {
-	Username string `json:"Username,omitempty" bson:"Username,omitempty"`
-	Password string `json:"Password,omitempty" bson:"Password,omitempty"`
+	Username string `json:"Username" bson:"Username"`
+	Password string `json:"Password" bson:"Password"`
 }
 
 type SessionSt struct {
-	Username string `json:"Username,omitempty" bson:"Username"`
-	Session  string `json:"Session,omitempty" bson:"Session,omitempty"`
+	Username string `json:"Username" bson:"Username"`
+	Session  string `json:"Session" bson:"Session"`
 }

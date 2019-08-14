@@ -10,40 +10,6 @@ import (
 	"SV_CRM/common/utility"
 )
 
-func CreateProfile(Profile *models.Profile) error {
-
-	PasswordH := utility.SHA256OfString(Profile.PasswordHash)
-	uuid := utility.GenerateUUID()
-
-	m := DBConn()
-	tx, err := m.Begin()
-	if err != nil {
-		log.Print(err)
-	}
-
-	defer tx.Rollback()
-
-	stmt, err := tx.Prepare("INSERT INTO Profile(uuid, CoEntityID, Profilename, first_name, last_name, email,ContactNo, password_hash) VALUES (?,?,?,?,?,?,?,?)")
-	if err != nil {
-		return err
-	}
-	
-
-	defer stmt.Close()
-
-	_, err = stmt.Exec(uuid, Profile.CoEntityID, Profile.Profilename, Profile.FirstName, Profile.LastName, Profile.Email, Profile.ContactNo, PasswordH)
-	if err != nil {
-		return err
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func EntityCreate(Entity *models.CoEntity) error {
 
 	uuid := utility.GenerateUUID()
@@ -61,7 +27,6 @@ func EntityCreate(Entity *models.CoEntity) error {
 
 	fmt.Println(" values in the string %v & %v & %v & %v & %v & %v & %v & %v", uuid, Entity.CoEntityId, Entity.CompanyNm, Entity.AliasNm, Entity.State, Country, Entity.Email, SecretKey)
 
-	fmt.Println("Password is")
 	stmt, err := tx.Prepare("INSERT INTO CoEntity(uuid, CoEntityId, CompanyNm, AliasNm, State, Country, Email, SecretKey, Password) VALUES (?,?,?,?,?,?,?,?,?)")
 	if err != nil {
 		return err
@@ -80,6 +45,116 @@ func EntityCreate(Entity *models.CoEntity) error {
 	}
 
 	return nil
+}
+func CreateProfile(Profile *models.Profile) error {
+
+	PasswordH := utility.SHA256OfString(Profile.PasswordHash)
+	uuid := utility.GenerateUUID()
+
+	m := DBConn()
+	tx, err := m.Begin()
+	if err != nil {
+		log.Print(err)
+	}
+
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare("INSERT INTO Profile(uuid, CoEntityID, Profilename, first_name, last_name, email,ContactNo, password_hash) VALUES (?,?,?,?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(uuid, Profile.CoEntityID, Profile.Profilename, Profile.FirstName, Profile.LastName, Profile.Email, Profile.ContactNo, PasswordH)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func CreateContract(con *models.Contract) error {
+
+	uuid := utility.GenerateUUID()
+	SecretKey := utility.SHA256OfString(uuid)
+	JsonBlock := utility.SHA256OfString(SecretKey)
+	//EffectiveDate, err := strconv.Atoi(con.EffectiveDate)
+
+	m := DBConn()
+	tx, err := m.Begin()
+	if err != nil {
+		log.Print(err)
+	}
+
+	defer tx.Rollback()
+
+	fmt.Println(" values in the string %v & %v & %v & %v & %v & %v & %v \n", uuid, con.CoEntityID, con.Version, con.EffectiveDate, con.ContractType, con.JsonObject, JsonBlock, SecretKey)
+
+	stmt, err := tx.Prepare("INSERT INTO contracts(ContractID, CoEntityId, Version, EffectiveDate, ContractType, JsonObject, JsonBlock, SecretKey) VALUES (?,?,?,?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(uuid, con.CoEntityID, con.Version, con.EffectiveDate, con.ContractType, con.JsonObject, JsonBlock, SecretKey)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return err
+
+}
+
+//TODO: Need to append lenth logic
+func CreateAllocation(con *models.Contract) error {
+
+	uuid := utility.GenerateUUID()
+
+	Contract, err := GetContractDetailsByCoEntityID(con.CoEntityID)
+
+	contractID := Contract.ContractID
+
+	m := DBConn()
+	tx, err := m.Begin()
+	if err != nil {
+		log.Print(err)
+	}
+
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare("INSERT INTO allocation (uuid, ContractID, CoEntityID, ProfileID, Allocation, ContractType, Relation, JsonObject) VALUES (?,?,?,?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	for i := 0; i < len(con.Allocation); {
+		_, err = stmt.Exec(uuid, contractID, con.CoEntityID, con.Allocation[i].ProfileName, con.Allocation[i].Percentage, con.ContractType, con.Allocation[i].Relation, con.JsonObject)
+		if err != nil {
+			return err
+		}
+		i++
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+	return err
+
 }
 
 //===Get queries=======================================================
@@ -190,6 +265,22 @@ func GetEntityDetailsByCoEntityId(CoEntityId string) (*models.CoEntity, error) {
 	err = row.Scan(&u.UUID, &u.CoEntityId, &u.CompanyNm, &u.AliasNm, &u.State, &u.Country, &u.Email, &u.Status, &u.TimestampCreated, &u.TimestampModified)
 	return &u, err
 }
+func GetEntityDetailsByCoEntityIdForPassword(CoEntityId string) (*models.CoEntity, error) {
+	m := DBConn()
+
+	stmt, err := m.Prepare("SELECT uuid, CoEntityID, CompanyNm, AliasNm, State, Country,Email, SecretKey, password, Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM coentity WHERE Status in ('0','1') and CoEntityID = ?")
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	row := stmt.QueryRow(CoEntityId)
+	u := models.CoEntity{}
+	err = row.Scan(&u.UUID, &u.CoEntityId, &u.CompanyNm, &u.AliasNm, &u.State, &u.Country, &u.Email, &u.SecretKey, &u.Password, &u.Status, &u.TimestampCreated, &u.TimestampModified)
+	return &u, err
+}
 
 func GetEntityDetailsByCompanyNm(CompanyNm string) (*models.CoEntity, error) {
 	m := DBConn()
@@ -254,6 +345,24 @@ func GetProfileDetailsWithoutStatusByemail(email string) (*models.Profile, error
 	row := stmt.QueryRow(email)
 	u := models.Profile{}
 	err = row.Scan(&u.UUID, &u.CoEntityID, &u.Profilename, &u.FirstName, &u.LastName, &u.Email, &u.EmailVerified, &u.PasswordHash, &u.ContactNo, &u.PhoneVerified, &u.Status, &u.TimestampCreated, &u.TimestampModified)
+	return &u, err
+
+}
+
+func GetContractDetailsByCoEntityID(CoEntityID string) (*models.Contract, error) {
+
+	m := DBConn()
+	stmt, err := m.Prepare("SELECT ContractID, CoEntityID, Version, EffectiveDate, ContractType, Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM contracts WHERE Status in ('0','1') and CoEntityID = ?")
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	row := stmt.QueryRow(CoEntityID)
+	u := models.Contract{}
+	err = row.Scan(&u.ContractID, &u.CoEntityID, &u.Version, &u.EffectiveDate, &u.ContractType, &u.Status, &u.TimestampCreated, &u.TimestampModified)
 	return &u, err
 
 }

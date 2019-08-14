@@ -20,7 +20,7 @@ type CoEntity struct {
 //VerifyCredentials function
 func VerifyCredentials(e *common.Env, username string, password string) bool {
 
-	u, err := datastore.GetEntityDetailsByCoEntityId(username)
+	u, err := datastore.GetEntityDetailsByCoEntityIdForPassword(username)
 	if u == nil {
 		return false
 	}
@@ -35,6 +35,11 @@ func VerifyCredentials(e *common.Env, username string, password string) bool {
 	fmt.Println("auth result: ", u.Password)
 	fmt.Println("auth result: ", pwh)
 
+	fmt.Println("auth result: ", username)
+	fmt.Println("auth result: ", u.CoEntityId)
+	fmt.Println("auth result: ", pwh)
+	fmt.Println("auth result: ", u.Password)
+
 	if strings.ToLower(username) == strings.ToLower(u.CoEntityId) && utility.SHA256OfString(password) == u.Password {
 		log.Println("Successful login attempt from user: ", u.CoEntityId)
 		return true
@@ -42,5 +47,4 @@ func VerifyCredentials(e *common.Env, username string, password string) bool {
 		log.Println("Unsuccessful login attempt from user: ", u.CoEntityId)
 		return false
 	}
-
 }
