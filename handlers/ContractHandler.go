@@ -42,20 +42,33 @@ func CreateContract(e *common.Env) http.HandlerFunc {
 				}
 				json.NewEncoder(w).Encode(ErrorResponse)
 			} else {
-				//This code used to marshal the json
-				var b []byte
-				b, err = json.Marshal(&u)
+				_, error := datastore.GetContractDetailsByCoEntityID(u.CoEntityID)
+				if error == sql.ErrNoRows {
+					//This code used to marshal the json
+					var b []byte
+					b, err = json.Marshal(&u)
 
-				u.JsonObject = b
-				datastore.CreateContract(&u)
-				datastore.CreateAllocation(&u)
+					u.JsonObject = b
 
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(u)
+					datastore.CreateContract(&u)
+					datastore.CreateAllocation(&u)
 
-				fmt.Println("Value of profile %v \n")
+					w.Header().Set("Content-Type", "application/json")
+					w.WriteHeader(http.StatusOK)
+					json.NewEncoder(w).Encode(u)
 
+					fmt.Println("Value of profile %v \n")
+
+				} else {
+					w.Header().Set("Content-Type", "application/json")
+					w.WriteHeader(http.StatusOK)
+					ErrorResponse := map[string]string{
+						"ErrorCode":   "CONTRACT_ALREADY_EXIST",
+						"DESCRIPTION": "Contract for this Profile already Exist",
+					}
+					json.NewEncoder(w).Encode(ErrorResponse)
+
+				}
 			}
 
 		} else {

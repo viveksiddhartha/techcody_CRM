@@ -38,17 +38,17 @@ func main() {
 	http.Handle("/", router)
 	//Home handler will provide the welcome message on index page
 	router.HandleFunc("/", handlers.HomeHandler).Methods("GET")
-	router.Handle("/login", handlers.LoginEntity(&env))
-	router.Handle("/entity", handlers.EntityCreate(&env))
-	router.HandleFunc("/logout", handlers.LogOutCRM)
+	router.Handle("/api/crm/login", handlers.LoginEntity(&env))
+	router.Handle("/api/crm/entity", handlers.EntityCreate(&env))
+	router.HandleFunc("/api/crm/logout", handlers.LogOutCRM)
 
 	//========Cookie based Authenticiation
-	router.Handle("/profile", middleware.GatedRestAuthHandler(handlers.ProfileCreate(&env)))
-	router.Handle("/profilelist", middleware.GatedRestAuthHandler(handlers.GetAllProfile(&env)))
-	router.Handle("/updateprofile", middleware.GatedRestAuthHandler(handlers.UpdateProfile(&env)))
-	router.Handle("/updateentity", middleware.GatedRestAuthHandler(handlers.UpdateEntity(&env)))
-	router.Handle("/getprofile", middleware.GatedRestAuthHandler(handlers.GetAllEntity(&env)))
-	router.Handle("/contract", middleware.GatedRestAuthHandler(handlers.CreateContract(&env)))
+	router.Handle("/api/crm/profile", middleware.GatedRestAuthHandler(handlers.ProfileCreate(&env)))
+	router.Handle("/api/crm/profilelist", middleware.GatedRestAuthHandler(handlers.GetAllProfile(&env)))
+	router.Handle("/api/crm/updateprofile", middleware.GatedRestAuthHandler(handlers.UpdateProfile(&env)))
+	router.Handle("/api/crm/updateentity", middleware.GatedRestAuthHandler(handlers.UpdateEntity(&env)))
+	router.Handle("/api/crm/getprofile", middleware.GatedRestAuthHandler(handlers.GetAllEntity(&env)))
+	router.Handle("/api/crm/contract", middleware.GatedRestAuthHandler(handlers.CreateContract(&env)))
 
 	//========Cookie based Authenticiation
 	router.HandleFunc("/healthcheck", handlers.HealthCheckHandler)

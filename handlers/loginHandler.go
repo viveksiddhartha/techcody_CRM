@@ -70,10 +70,20 @@ func LoginEntity(env *common.Env) http.Handler {
 				}
 
 				usession := map[string]string{
-					"Username": ul.Username,
-					"Session":  sessionID,
-				}
 
+					"username":  ul.Username,
+					"token":     sessionID,
+					"role":      "admin",
+					"firstName": "Chintu",
+					"lastName":  "Singh",
+				}
+				/* firstName: "Admin"
+				   id: 1
+				   lastName: "User"
+				   role: "Admin"
+				   token: "fake-jwt-token.1"
+				   username: "admin"
+				*/
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusOK)
 				//w.Write([]byte("200 - authenticated successfully"))
