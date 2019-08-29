@@ -10,6 +10,42 @@ import (
 	"SV_CRM/common/utility"
 )
 
+func EntityCreate(Entity *models.CoEntity) error {
+
+	uuid := utility.GenerateUUID()
+	SecretKey := utility.SHA256OfString(uuid)
+	Password := utility.SHA256OfString(Entity.Password)
+	Country := "INDIA"
+
+	m := DBConn()
+	tx, err := m.Begin()
+	if err != nil {
+		log.Print(err)
+	}
+
+	defer tx.Rollback()
+
+	fmt.Println(" values in the string %v & %v & %v & %v & %v & %v & %v & %v", uuid, Entity.CoEntityId, Entity.CompanyNm, Entity.AliasNm, Entity.State, Country, Entity.Email, SecretKey)
+
+	stmt, err := tx.Prepare("INSERT INTO CoEntity(uuid, CoEntityId, CompanyNm, AliasNm, State, Country, Email, SecretKey, Password) VALUES (?,?,?,?,?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(uuid, Entity.CoEntityId, Entity.CompanyNm, Entity.AliasNm, Entity.State, Country, Entity.Email, SecretKey, Password)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 func CreateProfile(Profile *models.Profile) error {
 
 	PasswordH := utility.SHA256OfString(Profile.PasswordHash)
@@ -27,7 +63,6 @@ func CreateProfile(Profile *models.Profile) error {
 	if err != nil {
 		return err
 	}
-	fmt.Print("stmt details%v", stmt)
 
 	defer stmt.Close()
 
@@ -44,11 +79,12 @@ func CreateProfile(Profile *models.Profile) error {
 	return nil
 }
 
-func EntityCreate(Entity *models.CoEntity) error {
+func CreateContract(con *models.Contract) error {
 
 	uuid := utility.GenerateUUID()
 	SecretKey := utility.SHA256OfString(uuid)
-	Country := "INDIA"
+	JsonBlock := utility.SHA256OfString(SecretKey)
+	//EffectiveDate, err := strconv.Atoi(con.EffectiveDate)
 
 	m := DBConn()
 	tx, err := m.Begin()
@@ -58,16 +94,16 @@ func EntityCreate(Entity *models.CoEntity) error {
 
 	defer tx.Rollback()
 
-	fmt.Println(" values in the string %v & %v & %v & %v & %v & %v & %v & %v", uuid, Entity.CoEntityId, Entity.CompanyNm, Entity.AliasNm, Entity.State, Country, Entity.Email, SecretKey)
+	fmt.Println(" values in the string %v & %v & %v & %v & %v & %v & %v \n", uuid, con.CoEntityID, con.Version, con.EffectiveDate, con.ContractType, con.JsonObject, JsonBlock, SecretKey)
 
-	stmt, err := tx.Prepare("INSERT INTO CoEntity(uuid, CoEntityId, CompanyNm, AliasNm, State, Country, Email, SecretKey) VALUES (?,?,?,?,?,?,?,?)")
+	stmt, err := tx.Prepare("INSERT INTO contracts(ContractID, CoEntityId, Version, EffectiveDate, ContractType, JsonObject, JsonBlock, SecretKey) VALUES (?,?,?,?,?,?,?,?)")
 	if err != nil {
 		return err
 	}
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(uuid, Entity.CoEntityId, Entity.CompanyNm, Entity.AliasNm, Entity.State, Country, Entity.Email, SecretKey)
+	_, err = stmt.Exec(uuid, con.CoEntityID, con.Version, con.EffectiveDate, con.ContractType, con.JsonObject, JsonBlock, SecretKey)
 	if err != nil {
 		return err
 	}
@@ -77,10 +113,71 @@ func EntityCreate(Entity *models.CoEntity) error {
 		return err
 	}
 
-	return nil
+	return err
+
 }
 
-func GetProfileDetailsByProfilename(Profilename string) (*models.Profile, error) {
+//TODO: Need to append lenth logic
+func CreateAllocation(con *models.Contract) error {
+
+	uuid := utility.GenerateUUID()
+
+	Contract, err := GetContractDetailsByCoEntityID(con.CoEntityID)
+
+	contractID := Contract.ContractID
+
+	m := DBConn()
+	tx, err := m.Begin()
+	if err != nil {
+		log.Print(err)
+	}
+
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare("INSERT INTO allocation (uuid, ContractID, CoEntityID, ProfileID, Allocation, ContractType, Relation, JsonObject) VALUES (?,?,?,?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	for i := 0; i < len(con.Allocation); {
+		_, err = stmt.Exec(uuid, contractID, con.CoEntityID, con.Allocation[i].ProfileName, con.Allocation[i].Percentage, con.ContractType, con.Allocation[i].Relation, con.JsonObject)
+		if err != nil {
+			return err
+		}
+		i++
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+	return err
+
+}
+
+//===Get queries=======================================================
+
+func GetProfileDetailsByCoEntityProfilename(CoEntityID string, Profilename string) (*models.Profile, error) {
+
+	m := DBConn()
+	stmt, err := m.Prepare("SELECT uuid, CoEntityID, profilename, first_name, last_name, email,EmailVerified, password_hash,ContactNo,PhoneVerified,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM Profile WHERE Status in ('0','1') and CoEntityId=? and Profilename = ? ")
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	row := stmt.QueryRow(CoEntityID, Profilename)
+	u := models.Profile{}
+	err = row.Scan(&u.UUID, &u.CoEntityID, &u.Profilename, &u.FirstName, &u.LastName, &u.Email, &u.EmailVerified, &u.PasswordHash, &u.ContactNo, &u.PhoneVerified, &u.Status, &u.TimestampCreated, &u.TimestampModified)
+	return &u, err
+
+}
+
+func GetProfileDetailsByProfil(Profilename string) (*models.Profile, error) {
 
 	m := DBConn()
 	stmt, err := m.Prepare("SELECT uuid, CoEntityID, profilename, first_name, last_name, email,EmailVerified, password_hash,ContactNo,PhoneVerified,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM Profile WHERE Status in ('0','1') and Profilename = ?")
@@ -92,24 +189,6 @@ func GetProfileDetailsByProfilename(Profilename string) (*models.Profile, error)
 	defer stmt.Close()
 
 	row := stmt.QueryRow(Profilename)
-	u := models.Profile{}
-	err = row.Scan(&u.UUID, &u.CoEntityID, &u.Profilename, &u.FirstName, &u.LastName, &u.Email, &u.EmailVerified, &u.PasswordHash, &u.ContactNo, &u.PhoneVerified, &u.Status, &u.TimestampCreated, &u.TimestampModified)
-	return &u, err
-
-}
-
-func GetProfileDetailsByProfilCoEntity(Profilename string, CoEntityID string) (*models.Profile, error) {
-
-	m := DBConn()
-	stmt, err := m.Prepare("SELECT uuid, CoEntityID, profilename, first_name, last_name, email,EmailVerified, password_hash,ContactNo,PhoneVerified,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM Profile WHERE Status in ('0','1') and Profilename = ? and CoEntityID =?")
-	if err != nil {
-		log.Print(err)
-		return nil, err
-	}
-
-	defer stmt.Close()
-
-	row := stmt.QueryRow(Profilename, CoEntityID)
 	u := models.Profile{}
 	err = row.Scan(&u.UUID, &u.CoEntityID, &u.Profilename, &u.FirstName, &u.LastName, &u.Email, &u.EmailVerified, &u.PasswordHash, &u.ContactNo, &u.PhoneVerified, &u.Status, &u.TimestampCreated, &u.TimestampModified)
 	return &u, err
@@ -133,6 +212,7 @@ func GetProfileDetailsByCoEntity(CoEntityId string) (*models.Profile, error) {
 	return &u, err
 
 }
+
 func GetProfileDetailsByemail(email string) (*models.Profile, error) {
 
 	m := DBConn()
@@ -172,7 +252,7 @@ func GetProfileDetailsByContactNo(ContactNo string) (*models.Profile, error) {
 func GetEntityDetailsByCoEntityId(CoEntityId string) (*models.CoEntity, error) {
 	m := DBConn()
 
-	stmt, err := m.Prepare("SELECT uuid, CoEntityID, CompanyNm, AliasNm, State, Country,Email, SecretKey,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM coentity WHERE Status in ('0','1') and CoEntityID = ?")
+	stmt, err := m.Prepare("SELECT uuid, CoEntityID, CompanyNm, AliasNm, State, Country,Email, Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM coentity WHERE Status in ('0','1') and CoEntityID = ?")
 	if err != nil {
 		log.Print(err)
 		return nil, err
@@ -182,7 +262,23 @@ func GetEntityDetailsByCoEntityId(CoEntityId string) (*models.CoEntity, error) {
 
 	row := stmt.QueryRow(CoEntityId)
 	u := models.CoEntity{}
-	err = row.Scan(&u.UUID, &u.CoEntityId, &u.CompanyNm, &u.AliasNm, &u.SecretKey, &u.Country, &u.Email, &u.SecretKey, &u.TimestampCreated, &u.TimestampModified)
+	err = row.Scan(&u.UUID, &u.CoEntityId, &u.CompanyNm, &u.AliasNm, &u.State, &u.Country, &u.Email, &u.Status, &u.TimestampCreated, &u.TimestampModified)
+	return &u, err
+}
+func GetEntityDetailsByCoEntityIdForPassword(CoEntityId string) (*models.CoEntity, error) {
+	m := DBConn()
+
+	stmt, err := m.Prepare("SELECT uuid, CoEntityID, CompanyNm, AliasNm, State, Country,Email, SecretKey, password, Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM coentity WHERE Status in ('0','1') and CoEntityID = ?")
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	row := stmt.QueryRow(CoEntityId)
+	u := models.CoEntity{}
+	err = row.Scan(&u.UUID, &u.CoEntityId, &u.CompanyNm, &u.AliasNm, &u.State, &u.Country, &u.Email, &u.SecretKey, &u.Password, &u.Status, &u.TimestampCreated, &u.TimestampModified)
 	return &u, err
 }
 
@@ -218,17 +314,59 @@ func GetEntityDetailsByEmail(Email string) (*models.CoEntity, error) {
 	return &u, err
 }
 
-/*
-func GetEntityDetailsByGenericParam(u *models.CoEntity) {
+func GetProfileDetailsWithoutStatusByContactNo(ContactNo string) (*models.Profile, error) {
+
 	m := DBConn()
+	stmt, err := m.Prepare("SELECT uuid, CoEntityID, profilename, first_name, last_name, email,EmailVerified, password_hash,ContactNo,PhoneVerified,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM Profile WHERE ContactNo = ?")
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
 
-	row := m.QueryRow("SELECT uuid, CoEntityID, CompanyNm, AliasNm, State, Country,Email, SecretKey,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM coentity WHERE Status in ('0','1') and CoEntityID = $1", u.CoEntityId)
+	defer stmt.Close()
 
-	err = row.Scan(&u.UUID, &u.CoEntityId, &u.CompanyNm, &u.AliasNm, &u.SecretKey, &u.Country, &u.Email, &u.SecretKey, &u.TimestampCreated, &u.TimestampModified)
-	return nil, err
+	row := stmt.QueryRow(ContactNo)
+	u := models.Profile{}
+	err = row.Scan(&u.UUID, &u.CoEntityID, &u.Profilename, &u.FirstName, &u.LastName, &u.Email, &u.EmailVerified, &u.PasswordHash, &u.ContactNo, &u.PhoneVerified, &u.Status, &u.TimestampCreated, &u.TimestampModified)
+	return &u, err
 
 }
-*/
+func GetProfileDetailsWithoutStatusByemail(email string) (*models.Profile, error) {
+
+	m := DBConn()
+	stmt, err := m.Prepare("SELECT uuid, CoEntityID, profilename, first_name, last_name, email,EmailVerified, password_hash,ContactNo,PhoneVerified,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM Profile WHERE Status in ('0','1') and email = ?")
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	row := stmt.QueryRow(email)
+	u := models.Profile{}
+	err = row.Scan(&u.UUID, &u.CoEntityID, &u.Profilename, &u.FirstName, &u.LastName, &u.Email, &u.EmailVerified, &u.PasswordHash, &u.ContactNo, &u.PhoneVerified, &u.Status, &u.TimestampCreated, &u.TimestampModified)
+	return &u, err
+
+}
+
+func GetContractDetailsByCoEntityID(CoEntityID string) (*models.Contract, error) {
+
+	m := DBConn()
+	stmt, err := m.Prepare("SELECT ContractID, CoEntityID, Version, EffectiveDate, ContractType, Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM contracts WHERE Status in ('0','1') and CoEntityID = ?")
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	row := stmt.QueryRow(CoEntityID)
+	u := models.Contract{}
+	err = row.Scan(&u.ContractID, &u.CoEntityID, &u.Version, &u.EffectiveDate, &u.ContractType, &u.Status, &u.TimestampCreated, &u.TimestampModified)
+	return &u, err
+
+}
+
 //===Update queries=======================================================
 
 func UpdateProfileByProfileID(Profile *models.Profile) error {
@@ -242,7 +380,7 @@ func UpdateProfileByProfileID(Profile *models.Profile) error {
 	defer tx.Rollback()
 
 	stmt, err := tx.Prepare("UPDATE Profile set first_name =?, last_name =?, email =?,ContactNo =? where Profilename = ?")
-	//stmt, err := tx.Prepare("INSERT INTO Profile(Profilename, first_name, last_name, email,ContactNo) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE first_name=?, last_name=?,email=?,ContactNo=?")
+
 	if err != nil {
 		return err
 	}
@@ -261,4 +399,64 @@ func UpdateProfileByProfileID(Profile *models.Profile) error {
 	}
 
 	return nil
+}
+
+func UpdateEntityByEntityID(Entity *models.CoEntity) error {
+
+	m := DBConn()
+	tx, err := m.Begin()
+	if err != nil {
+		log.Print(err)
+	}
+
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare("UPDATE CoEntity SET CompanyNm =?, AliasNm =?, State =?, Email =?  where CoEntityId=?")
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(Entity.CompanyNm, Entity.AliasNm, Entity.State, Entity.Email, Entity.CoEntityId)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+//=========== GET multiple record List
+
+func GetAllProfileDetailsByCoEntity(CoEntityId string) ([]models.Profile, error) {
+
+	m := DBConn()
+	Profile := make([]models.Profile, 0)
+	stmt, err := m.Prepare("SELECT uuid, CoEntityID, profilename, first_name, last_name, email,EmailVerified, ContactNo,PhoneVerified,Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM Profile WHERE Status in ('0','1') and CoEntityId= ?")
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	rows, err := stmt.Query(CoEntityId)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		u := models.Profile{}
+		err := rows.Scan(&u.UUID, &u.CoEntityID, &u.Profilename, &u.FirstName, &u.LastName, &u.Email, &u.EmailVerified, &u.ContactNo, &u.PhoneVerified, &u.Status, &u.TimestampCreated, &u.TimestampModified)
+		if err != nil {
+			return nil, err
+		}
+		Profile = append(Profile, u)
+	}
+	return Profile, nil
 }
