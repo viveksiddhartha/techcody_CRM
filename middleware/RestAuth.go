@@ -1,10 +1,10 @@
 package middleware
 
 import (
-	"SV_CRM/authenticate"
 	"fmt"
 	"log"
 	"net/http"
+	"svcrm/authenticate"
 )
 
 func GatedRestAuthHandler(next http.HandlerFunc) http.Handler {

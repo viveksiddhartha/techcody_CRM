@@ -1,13 +1,13 @@
 package authenticate
 
 import (
-	"SV_CRM/common"
-	"SV_CRM/common/datastore"
-	"SV_CRM/common/utility"
-	"SV_CRM/models"
 	"fmt"
 	"log"
 	"strings"
+	"svcrm/common"
+	"svcrm/common/datastore"
+	"svcrm/common/utility"
+	"svcrm/models"
 )
 
 //CoEntity value story

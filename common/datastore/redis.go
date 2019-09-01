@@ -1,11 +1,11 @@
 package datastore
 
 import (
-	"SV_CRM/models"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
+	"svcrm/models"
 
 	"github.com/mediocregopher/radix.v2/pool"
 )

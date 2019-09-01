@@ -1,8 +1,8 @@
 package authenticate
 
 import (
-	"SV_CRM/models"
 	"net/http"
+	"svcrm/models"
 	"time"
 
 	"github.com/gorilla/securecookie"

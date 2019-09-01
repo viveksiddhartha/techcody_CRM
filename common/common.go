@@ -1,8 +1,6 @@
 package common
 
-import (
-	"SV_CRM/common/datastore"
-)
+import "svcrm/common/datastore"
 
 type Env struct {
 	DB datastore.Datastore

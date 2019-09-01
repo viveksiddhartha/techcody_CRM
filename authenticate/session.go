@@ -1,10 +1,10 @@
 package authenticate
 
 import (
-	"SV_CRM/common/datastore"
-	"SV_CRM/models"
 	"log"
 	"net/http"
+	"svcrm/common/datastore"
+	"svcrm/models"
 
 	"github.com/gorilla/sessions"
 )
