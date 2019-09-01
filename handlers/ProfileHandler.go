@@ -1,16 +1,16 @@
 package handlers
 
 import (
-	"SV_CRM/authenticate"
-	"SV_CRM/common"
-	"SV_CRM/common/datastore"
-	"SV_CRM/models"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"svcrm/authenticate"
+	"svcrm/common"
+	"svcrm/common/datastore"
+	"svcrm/models"
 )
 
 type Profiles struct {

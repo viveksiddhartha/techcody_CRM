@@ -1,8 +1,8 @@
 package datastore
 
 import (
-	"SV_CRM/models"
 	"database/sql"
+	"svcrm/models"
 )
 
 type Datastore interface {

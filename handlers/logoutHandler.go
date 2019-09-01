@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"SV_CRM/authenticate"
 	"net/http"
+	"svcrm/authenticate"
 )
 
 func LogOutCRM(w http.ResponseWriter, r *http.Request) {
