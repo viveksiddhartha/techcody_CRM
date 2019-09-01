@@ -1,12 +1,12 @@
 [Unit]
-Description=Dockerized sv_crm
+Description=Dockerized svcrm
 After=docker.service
 Requires=docker.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-WorkingDirectory= /sv_crm
-ExecStart=/usr/local/bin/docker-compose -f /sv_crm/docker-compose.yml up -d
-ExecStop=/usr/local/bin/docker-compose -f /sv_crm/docker-compose.yml down
+WorkingDirectory= /svcrm
+ExecStart=/usr/local/bin/docker-compose -f /svcrm/docker-compose.yml up -d
+ExecStop=/usr/local/bin/docker-compose -f /svcrm/docker-compose.yml down
 [Install]
 WantedBy=multi-user.target
