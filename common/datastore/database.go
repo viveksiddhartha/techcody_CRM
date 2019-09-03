@@ -48,7 +48,7 @@ type RDatastore interface {
 
 func DBConn() (db *sql.DB) {
 	dbDriver := "mysql"
-	db, err := sql.Open(dbDriver, "sv_crm:sv_crm@tcp(35.238.79.206:3306)/SV_CRM")
+	db, err := sql.Open(dbDriver, "sv_crm:sv_crm@tcp(35.238.79.206:3306)/sv_crm")
 	if err != nil {
 		panic(err.Error())
 	}

@@ -27,7 +27,7 @@ func EntityCreate(Entity *models.CoEntity) error {
 
 	fmt.Println(" values in the string %v & %v & %v & %v & %v & %v & %v & %v", uuid, Entity.CoEntityId, Entity.CompanyNm, Entity.AliasNm, Entity.State, Country, Entity.Email, SecretKey)
 
-	stmt, err := tx.Prepare("INSERT INTO CoEntity(uuid, CoEntityId, CompanyNm, AliasNm, State, Country, Email, SecretKey, Password) VALUES (?,?,?,?,?,?,?,?,?)")
+	stmt, err := tx.Prepare("INSERT INTO coentity(uuid, CoEntityId, CompanyNm, AliasNm, State, Country, Email, SecretKey, Password) VALUES (?,?,?,?,?,?,?,?,?)")
 	if err != nil {
 		return err
 	}

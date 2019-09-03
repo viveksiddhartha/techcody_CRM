@@ -63,7 +63,7 @@ func EntityCreate(e *common.Env) http.Handler {
 			w.Header().Set("Content-Type", "application/json")
 			fmt.Printf("Valid session does not exist %v \n", u.CoEntityId)
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Valid session does not exist"))
+			w.Write([]byte("User Already exist"))
 
 		}
 
