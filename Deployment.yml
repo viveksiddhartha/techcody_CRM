@@ -1,0 +1,27 @@
+apiVersion: v1
+data:
+  certificate: |-
+    {
+      "private_key" : "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC2jd/aK6ikRdrN\nkFSO16/Fw8ky2gUZ5fqZzGAu+NZH4hoReQ+RZ9RjA80T495Zv3HZL806h3yUhcJR\nIC7AKtN7ISdk1yuHZpEuIfJ00AwU/12tjqJoXhs9kkemRijNorEM01N0Wk6UnNlH\n3bYlfE1DDkk1vLd81XpTz5u4jucn3EBWHZmv8rUdMKaJRALAlgZnIiYK+PVEkIzq\n6ZjlHTQgZFpfW1CD8Evj9M06LQ9yb09BVeb3WLRj8iUj24keVI4gFhO6DODY/B20\ndvmDyYJr0vuFDV9BVc4nFf1iGOqCSa1ACzKyGVwiUe8g5x5Ks4r/wErrFRVFL8C4\nz13hubUvAgMBAAECggEAC1FKYn04bE7EXOAozd5DUHBt5dAsZsmiOqy3/dGBf11e\nHl0yAOK+ARF4QlZrL4c16LAU+h7yM0cDoAHtxA4jpEuO5KqOUUujjoeeP22ygg6+\n4QapvOywpaWO+Zj56J3AejoTv2/l1ULQGat+Il7Nb23QThuQCJY3ikCht9RsMkVT\njJlmWKT2fCh8UaHmPgv5BrCnSyQIyYCNsqRUUODOn83IlXgyalQ2LseMkPQyOGBu\ngjrobeGFagvTsF1mVLWqeJA5kuQI36z2GNm3bPyO4apAthGGihMF5cg41YeH6AG1\nKmWz2c9tXiQT+xce7NWl05fY93ADk9eTxvgGsDllaQKBgQDcJChndIYONfbpRkTS\nd7W4NBb6tB4a2YP6OaptxyxdmRVqq1WHQDOQV4KVg1s4w4UQdkh2BC3ZxHeONM0J\ntcqvH2cjH6bZlRZ3CT2PuVX5wbTywpqU1dG7MnVjg2DyWoD2+6XbBsflR4PE8bwN\nXSWkwxCaNnO8x23BeWjB+79smwKBgQDUSlhPhyPeuGmodjVR7yPINBJqjIRJBpfu\n7FigTE5/qmC+Oe149bG8ru2gt1a18jqmdkfvCpv/QfXZZRB4WDhDzOkGNRthEcDe\ncUTc/Mugd6PGlNDixCHYz9LHgNBzrfOb/IMxQ+e57AqU2Hacfh7mudcI5fdpw6+/\ns5lqK2gg/QKBgF4L3G8GKtcbWtahvHklxy5gooiMNmhGEMnvpM2tT1jVM38Unz9e\nwCikGheBvJDthoVX4vD4LBZihqjsCcRiM6rJAajRttgxhx1nhzNFfGNsy78CQEPh\nbO5KSjgvQlWHMJ1TOLHvnapn+PVESJB1AMX4x7j6FkvJ7yu+kHB++nKNAoGACwRE\nqvPfZ6p4STbBM5xOZhBVuFPMdaGy9sIrIz5ygGuOE7Eb4sAVVi5ZxJJfHJgSdRsE\nRqJtUATTRlHZVfV2DgavPRQ6dIIgWSrVoQY5Zv1ucVq9sFbvTroSPSoxJx+q2bhz\n8nWMq/hU4D6PgTWGUwDn6N1ORp3SHAes+XaBM90CgYEAguPDTtIJHPDwd/yqdKS/\nN8XDftX9z/KRhDtBzQpCP5WwwViVmrdn4zQnxsVuyV6BsK5tFXm7jrYafqu/Yq8c\nefT46TQ3efAOVeweZFwwbd94NrvRt3+amxXq4y7rQcJ8vyzPVhx8IwqcaJ2NKzr4\neo5b5cFQlFwsgAJkXZ0S+sA=\n-----END PRIVATE KEY-----\n",
+      "certificate" : "-----BEGIN CERTIFICATE-----\nMIIDDDCCAfSgAwIBAgIIHMecLi3kjkgwDQYJKoZIhvcNAQELBQAwRjEYMBYGA1UE\nCxMPR0NQIE1hcmtldHBsYWNlMSowKAYDVQQDEyFTZWxmLXNpZ25lZCB0ZW1wb3Jh\ncnkgY2VydGlmaWNhdGUwHhcNMTkwOTAyMTM1MDA3WhcNMjAwOTAyMTM1MDA3WjBG\nMRgwFgYDVQQLEw9HQ1AgTWFya2V0cGxhY2UxKjAoBgNVBAMTIVNlbGYtc2lnbmVk\nIHRlbXBvcmFyeSBjZXJ0aWZpY2F0ZTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC\nAQoCggEBALaN39orqKRF2s2QVI7Xr8XDyTLaBRnl+pnMYC741kfiGhF5D5Fn1GMD\nzRPj3lm/cdkvzTqHfJSFwlEgLsAq03shJ2TXK4dmkS4h8nTQDBT/Xa2OomheGz2S\nR6ZGKM2isQzTU3RaTpSc2UfdtiV8TUMOSTW8t3zVelPPm7iO5yfcQFYdma/ytR0w\npolEAsCWBmciJgr49USQjOrpmOUdNCBkWl9bUIPwS+P0zTotD3JvT0FV5vdYtGPy\nJSPbiR5UjiAWE7oM4Nj8HbR2+YPJgmvS+4UNX0FVzicV/WIY6oJJrUALMrIZXCJR\n7yDnHkqziv/ASusVFUUvwLjPXeG5tS8CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEA\njypYdPQn2JTB6K6bYwK6a4Syqba/qn1HiY5hvYNEKKKzdxyckKMcq0VtOsw8EL4Y\n3XTNCiwi14XkzkoFf22s/aLAAJs2kxBhBxLjQX4G2YnOB3LwAHYMh3ORn/h5IAlX\n2i0LAtx3FXMu71gvHL4Fj+QYVzbQdKQx4FEa3K0aVaIwi3ec4wlgPf/1EzB4kOqY\nmplljTxxJ89irvjsnGf9FEktM424oVv8/cEY/R1votP1y6VQS5feSyutU8vDUGbs\nWU5AxOxhCGmunaj1zOjhw59OolPZwABvW8i2Ki5MWEm2KuW9uLruME2x/O50Eilp\nvUgIVruRsu6ssRH6eNQnHw==\n-----END CERTIFICATE-----\n"
+    }
+  jenkins.image: gcr.io/cloud-marketplace/google/jenkins@sha256:b67e8b8537ad2edbfff90c6732bed846a22b6603966f0bb6ce4960d8fa788fbc
+  name: svcrm
+  namespace: default
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2019-09-03T13:50:07Z"
+  labels:
+    app.kubernetes.io/component: deployer.marketplace.cloud.google.com
+    app.kubernetes.io/name: svcrm
+  name: svcrm-deployer-config
+  namespace: default
+  ownerReferences:
+  - apiVersion: app.k8s.io/v1beta1
+    blockOwnerDeletion: true
+    kind: Application
+    name: svcrm
+    uid: bd04324b-ce51-11e9-a9e9-42010a800209
+  resourceVersion: "941418"
+  selfLink: /api/v1/namespaces/default/configmaps/svcrm-deployer-config
+  uid: bd65b580-ce51-11e9-a9e9-42010a800209
