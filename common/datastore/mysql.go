@@ -122,7 +122,7 @@ func CreateAllocation(con *models.Contract) error {
 
 	uuid := utility.GenerateUUID()
 
-	Contract, err := GetContractDetailsByCoEntityID(con.CoEntityID)
+	Contract, err := GetContractsByCoEntityID(con.CoEntityID)
 
 	contractID := Contract.ContractID
 
@@ -349,7 +349,7 @@ func GetProfileDetailsWithoutStatusByemail(email string) (*models.Profile, error
 
 }
 
-func GetContractDetailsByCoEntityID(CoEntityID string) (*models.Contract, error) {
+func GetContractsByCoEntityID(CoEntityID string) (*models.Contract, error) {
 
 	m := DBConn()
 	stmt, err := m.Prepare("SELECT ContractID, CoEntityID, Version, EffectiveDate, ContractType, Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM contracts WHERE Status in ('0','1') and CoEntityID = ?")
@@ -431,6 +431,44 @@ func UpdateEntityByEntityID(Entity *models.CoEntity) error {
 	return nil
 }
 
+func UpdateContract(con *models.Contract) error {
+
+	uuid := utility.GenerateUUID()
+	SecretKey := utility.SHA256OfString(uuid)
+	JsonBlock := utility.SHA256OfString(SecretKey)
+	//EffectiveDate, err := strconv.Atoi(con.EffectiveDate)
+
+	m := DBConn()
+	tx, err := m.Begin()
+	if err != nil {
+		log.Print(err)
+	}
+
+	defer tx.Rollback()
+
+	fmt.Println(" values in the string %v & %v & %v & %v & %v & %v & %v \n", uuid, con.CoEntityID, con.Version, con.EffectiveDate, con.ContractType, con.JsonObject, JsonBlock, SecretKey)
+
+	stmt, err := tx.Prepare("UPDATE contracts SET (ContractID, CoEntityId, Version, EffectiveDate, ContractType, JsonObject, JsonBlock, SecretKey) VALUES (?,?,?,?,?,?,?,?)")
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(uuid, con.CoEntityID, con.Version, con.EffectiveDate, con.ContractType, con.JsonObject, JsonBlock, SecretKey)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return err
+
+}
+
 //=========== GET multiple record List
 
 func GetAllProfileDetailsByCoEntity(CoEntityId string) ([]models.Profile, error) {
@@ -459,4 +497,66 @@ func GetAllProfileDetailsByCoEntity(CoEntityId string) ([]models.Profile, error)
 		Profile = append(Profile, u)
 	}
 	return Profile, nil
+}
+
+func GetAllContractByCoEntity(CoEntityId string) ([]models.Contract, error) {
+
+	m := DBConn()
+	Contract := make([]models.Contract, 0)
+	stmt, err := m.Prepare("SELECT ContractID, CoEntityID, Version, EffectiveDate, ContractType, Status, UNIX_TIMESTAMP(created_ts), UNIX_TIMESTAMP(updated_ts) FROM contracts WHERE Status in ('0','1') and CoEntityID = ?")
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	rows, err := stmt.Query(CoEntityId)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		u := models.Contract{}
+		err := rows.Scan(&u.ContractID, &u.CoEntityID, &u.Version, &u.EffectiveDate, &u.ContractType, &u.Status, &u.TimestampCreated, &u.TimestampModified)
+		if err != nil {
+			return nil, err
+		}
+		Contract = append(Contract, u)
+	}
+	return Contract, nil
+}
+
+func GetAllocationByCoEntityContractID(CoEntityID string) ([]models.AllocationList, error) {
+
+	m := DBConn()
+	AllocationList := make([]models.AllocationList, 0)
+	contractId, err := GetContractsByCoEntityID(CoEntityID)
+	if err != nil {
+		return nil, err
+	}
+
+	stmt, err := m.Prepare("SELECT allocation.uuid, contracts.CoEntityID, contracts.ContractID, allocation.ProfileID, contracts.ContractType, contracts.EffectiveDate, allocation.Allocation,  allocation.Relation, allocation.status, contracts.Version, allocation.created_ts, allocation.updated_ts FROM contracts , allocation WHERE contracts.ContractID = allocation.ContractID AND allocation.Status in ('0','1') and contracts.CoEntityID = ? and contracts.ContractID=?")
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+
+	defer stmt.Close()
+
+	rows, err := stmt.Query(CoEntityID, contractId.ContractID)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		u := models.AllocationList{}
+		err := rows.Scan(&u.UUID, &u.CoEntityID, &u.ContractID, &u.ProfileName, &u.ContractType, &u.EffectiveDate, &u.Percentage, &u.Relation, &u.Status, &u.Version, &u.TimestampCreated, &u.TimestampModified)
+		if err != nil {
+			return nil, err
+		}
+		AllocationList = append(AllocationList, u)
+	}
+
+	return AllocationList, nil
 }

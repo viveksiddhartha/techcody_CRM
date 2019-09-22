@@ -47,8 +47,10 @@ func main() {
 	router.Handle("/api/crm/profilelist", middleware.GatedRestAuthHandler(handlers.GetAllProfile(&env)))
 	router.Handle("/api/crm/updateprofile", middleware.GatedRestAuthHandler(handlers.UpdateProfile(&env)))
 	router.Handle("/api/crm/updateentity", middleware.GatedRestAuthHandler(handlers.UpdateEntity(&env)))
-	router.Handle("/api/crm/getprofile", middleware.GatedRestAuthHandler(handlers.GetAllEntity(&env)))
+	router.Handle("/api/crm/getentity", middleware.GatedRestAuthHandler(handlers.GetAllEntity(&env)))
 	router.Handle("/api/crm/contract", middleware.GatedRestAuthHandler(handlers.CreateContract(&env)))
+	router.Handle("/api/crm/contractlist", middleware.GatedRestAuthHandler(handlers.GetAllContracts(&env)))
+	router.Handle("/api/crm/allocation", middleware.GatedRestAuthHandler(handlers.GetAllocationByContractID(&env)))
 
 	//========Cookie based Authenticiation
 	router.HandleFunc("/healthcheck", handlers.HealthCheckHandler)

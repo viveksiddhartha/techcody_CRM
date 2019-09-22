@@ -2,6 +2,7 @@ package datastore
 
 import (
 	"database/sql"
+	"log"
 	"svcrm/models"
 )
 
@@ -29,14 +30,17 @@ type Datastore interface {
 	GetProfileDetailsByProfil(Profilename string) (*models.Profile, error)
 
 	//======GET Contract ===================
-	GetContractDetailsByCoEntityID(CoEntityID string) (*models.Allocation, error)
+	GetContractsByCoEntityID(CoEntityID string) (*models.Allocation, error)
 
 	//==========UpdateProfile
 	UpdateProfileByProfileID(Profile *models.Profile) error
 	UpdateEntityByEntityID(Entity *models.CoEntity) error
+	UpdateContract(con *models.Contract) error
 
 	//==========GET All
 	GetAllProfileDetailsByCoEntity(CoEntityId string) ([]models.Profile, error)
+	GetAllocationByCoEntityContractID(CoEntityId string) ([]models.AllocationList, error)
+	GetAllContractByCoEntity(CoEntityId string) ([]models.Contract, error)
 }
 
 type RDatastore interface {
@@ -49,6 +53,13 @@ type RDatastore interface {
 func DBConn() (db *sql.DB) {
 	dbDriver := "mysql"
 	db, err := sql.Open(dbDriver, "sv_crm:sv_crm@tcp(127.0.0.1:3306)/sv_crm")
+	db.SetConnMaxLifetime(500)
+	db.SetMaxIdleConns(10)
+	db.SetMaxOpenConns(5)
+	db.Stats()
+	if err != nil {
+		log.Fatal(err)
+	}
 	if err != nil {
 		panic(err.Error())
 	}
