@@ -22,10 +22,10 @@ func main() {
 	//Connection for Database
 	datastore.DBConn()
 
+	//datastore.NewRedisDatastore()
+
 	datastore.NewRedisDatastore()
-
 	fmt.Println("Connected successfully")
-
 	env := common.Env{}
 
 	db := datastore.DBConn()

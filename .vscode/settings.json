@@ -1,5 +1,3 @@
 {
-    "atlascode.jira.workingSite": {
-        "baseUrlSuffix": "atlassian.net"
-    }
+    "go.inferGopath": false
 }
