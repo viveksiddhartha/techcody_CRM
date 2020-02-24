@@ -73,7 +73,7 @@ func LoginEntity(env *common.Env) http.Handler {
 
 					"username":  ul.Username,
 					"token":     sessionID,
-					"role":      "admin",
+					"role":      "Admin",
 					"firstName": "Chintu",
 					"lastName":  "Singh",
 				}

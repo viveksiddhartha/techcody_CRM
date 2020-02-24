@@ -22,10 +22,10 @@ func main() {
 	//Connection for Database
 	datastore.DBConn()
 
+	//datastore.NewRedisDatastore()
+
 	datastore.NewRedisDatastore()
-
 	fmt.Println("Connected successfully")
-
 	env := common.Env{}
 
 	db := datastore.DBConn()
@@ -44,11 +44,16 @@ func main() {
 
 	//========Cookie based Authenticiation
 	router.Handle("/api/crm/profile", middleware.GatedRestAuthHandler(handlers.ProfileCreate(&env)))
-	router.Handle("/api/crm/profilelist", middleware.GatedRestAuthHandler(handlers.GetAllProfile(&env)))
-	router.Handle("/api/crm/updateprofile", middleware.GatedRestAuthHandler(handlers.UpdateProfile(&env)))
-	router.Handle("/api/crm/updateentity", middleware.GatedRestAuthHandler(handlers.UpdateEntity(&env)))
-	router.Handle("/api/crm/getprofile", middleware.GatedRestAuthHandler(handlers.GetAllEntity(&env)))
 	router.Handle("/api/crm/contract", middleware.GatedRestAuthHandler(handlers.CreateContract(&env)))
+
+	router.Handle("/api/crm/updateentity", middleware.GatedRestAuthHandler(handlers.UpdateEntity(&env)))
+	router.Handle("/api/crm/updateprofile", middleware.GatedRestAuthHandler(handlers.UpdateProfile(&env)))
+
+	router.Handle("/api/crm/getentity", middleware.GatedRestAuthHandler(handlers.GetAllEntity(&env)))
+	router.Handle("/api/crm/profilelist", middleware.GatedRestAuthHandler(handlers.GetAllProfile(&env)))
+
+	router.Handle("/api/crm/contractlist", middleware.GatedRestAuthHandler(handlers.GetAllContracts(&env)))
+	router.Handle("/api/crm/contract", middleware.GatedRestAuthHandler(handlers.GetAllocationByContractID(&env)))
 
 	//========Cookie based Authenticiation
 	router.HandleFunc("/healthcheck", handlers.HealthCheckHandler)
