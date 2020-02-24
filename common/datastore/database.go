@@ -52,7 +52,7 @@ type RDatastore interface {
 
 func DBConn() (db *sql.DB) {
 	dbDriver := "mysql"
-	db, err := sql.Open(dbDriver, "sv_crm:sv_crm@tcp(127.0.0.1:3306)/sv_crm")
+	db, err := sql.Open(dbDriver, "sv_crm:sv_crm@tcp(35.226.243.24:3306)/sv_crm")
 	db.SetConnMaxLifetime(500)
 	db.SetMaxIdleConns(10)
 	db.SetMaxOpenConns(5)
