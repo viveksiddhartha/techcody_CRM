@@ -52,7 +52,7 @@ func GetUserRedis(username string) (*models.CoEntity, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("BValue in GetUserRedis %v \n", username)
+	
 
 	exists, err := r.Cmd("EXISTS", "CoEntityID:"+username).Int()
 

@@ -46,6 +46,8 @@ func EntityCreate(Entity *models.CoEntity) error {
 
 	return nil
 }
+
+
 func CreateProfile(Profile *models.Profile) error {
 
 	PasswordH := utility.SHA256OfString(Profile.PasswordHash)
