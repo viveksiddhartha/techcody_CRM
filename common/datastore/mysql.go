@@ -1,13 +1,13 @@
 package datastore
 
 import (
-	"SV_CRM/models"
+	"SVCRM/models"
 	"fmt"
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"SV_CRM/common/utility"
+	"SVCRM/common/utility"
 )
 
 func EntityCreate(Entity *models.CoEntity) error {

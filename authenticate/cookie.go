@@ -1,7 +1,7 @@
 package authenticate
 
 import (
-	"SV_CRM/models"
+	"SVCRM/models"
 	"net/http"
 	"time"
 

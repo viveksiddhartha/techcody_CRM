@@ -1,7 +1,7 @@
 package datastore
 
 import (
-	"SV_CRM/models"
+	"SVCRM/models"
 	"database/sql"
 )
 

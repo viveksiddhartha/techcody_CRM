@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"SV_CRM/authenticate"
-	"SV_CRM/common"
-	"SV_CRM/common/datastore"
-	"SV_CRM/models"
+	"SVCRM/authenticate"
+	"SVCRM/common"
+	"SVCRM/common/datastore"
+	"SVCRM/models"
 	"database/sql"
 	"encoding/json"
 	"fmt"

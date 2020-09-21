@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"SV_CRM/authenticate"
+	"SVCRM/authenticate"
 	"fmt"
 	"log"
 	"net/http"

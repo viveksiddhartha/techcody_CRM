@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"SV_CRM/authenticate"
+	"SVCRM/authenticate"
 	"net/http"
 )
 

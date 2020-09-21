@@ -1,10 +1,10 @@
 package main
 
 import (
-	"SV_CRM/common"
-	"SV_CRM/common/datastore"
-	"SV_CRM/handlers"
-	"SV_CRM/middleware"
+	"SVCRM/common"
+	"SVCRM/common/datastore"
+	"SVCRM/handlers"
+	"SVCRM/middleware"
 	"fmt"
 	"net/http"
 

@@ -1,10 +1,10 @@
 package authenticate
 
 import (
-	"SV_CRM/common"
-	"SV_CRM/common/datastore"
-	"SV_CRM/common/utility"
-	"SV_CRM/models"
+	"SVCRM/common"
+	"SVCRM/common/datastore"
+	"SVCRM/common/utility"
+	"SVCRM/models"
 	"fmt"
 	"log"
 	"strings"

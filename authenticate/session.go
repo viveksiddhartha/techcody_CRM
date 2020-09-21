@@ -1,8 +1,8 @@
 package authenticate
 
 import (
-	"SV_CRM/common/datastore"
-	"SV_CRM/models"
+	"SVCRM/common/datastore"
+	"SVCRM/models"
 	"log"
 	"net/http"
 
