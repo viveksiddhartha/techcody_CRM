@@ -24,7 +24,7 @@ func main() {
 
 	//datastore.NewRedisDatastore()
 
-	datastore.NewRedisDatastore()
+	//	datastore.NewRedisDatastore()
 	fmt.Println("Connected successfully")
 	env := common.Env{}
 

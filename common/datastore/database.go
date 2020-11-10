@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"log"
 	"svcrm/models"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type Datastore interface {
@@ -52,8 +54,8 @@ type RDatastore interface {
 
 func DBConn() (db *sql.DB) {
 	dbDriver := "mysql"
-	db, err := sql.Open(dbDriver, "sv_crm:sv_crm@tcp(35.226.243.24:3306)/sv_crm")
-	db.SetConnMaxLifetime(500)
+	db, err := sql.Open(dbDriver, "svcrm:Pass#word1@tcp(localhost:3306)/sv_crm")
+	db.SetConnMaxLifetime(20)
 	db.SetMaxIdleConns(10)
 	db.SetMaxOpenConns(5)
 	db.Stats()
@@ -63,6 +65,7 @@ func DBConn() (db *sql.DB) {
 	if err != nil {
 		panic(err.Error())
 	}
+
 	return db
 
 }
