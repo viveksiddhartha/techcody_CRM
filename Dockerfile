@@ -1,5 +1,5 @@
 FROM golang:latest
-MAINTAINER Kamesh Balasubramanian kamesh@kamesh.com
+MAINTAINER VIEK SIDDHARTHA siddelhi1@gmail.com
 
 # Declare required environment variables
 ENV GOPATH=/go
