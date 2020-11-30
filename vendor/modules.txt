@@ -1,0 +1,16 @@
+# github.com/go-sql-driver/mysql v1.5.0
+## explicit
+github.com/go-sql-driver/mysql
+# github.com/gorilla/mux v1.8.0
+## explicit
+github.com/gorilla/mux
+# github.com/gorilla/securecookie v1.1.1
+## explicit
+github.com/gorilla/securecookie
+# github.com/gorilla/sessions v1.2.1
+## explicit
+github.com/gorilla/sessions
+# github.com/mediocregopher/radix.v2 v0.0.0-20181115013041-b67df6e626f9
+## explicit
+github.com/mediocregopher/radix.v2/pool
+github.com/mediocregopher/radix.v2/redis
